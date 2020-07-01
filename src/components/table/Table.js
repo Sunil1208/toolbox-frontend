@@ -51,16 +51,16 @@ const TableData = () => {
   
       if(TotalCount%5===0){
         let tempPageNo = parseInt(TotalCount/5)
-        console.log(tempPageNo)
+        //console.log(tempPageNo)
         setPageNumber(tempPageNo)
       } else {
         let tempPageNo = TotalCount/5
         tempPageNo= parseInt(tempPageNo+1)
-        console.log(tempPageNo)
+        //console.log(tempPageNo)
         setPageNumber(tempPageNo)
   
       }
-      console.log(`New Page Number is : ${pageNumber}`)
+      //console.log(`New Page Number is : ${pageNumber}`)
       return ''
     }
 
@@ -82,7 +82,7 @@ const TableData = () => {
       }
 
     
-    console.log(data)
+    //console.log(data)
     return(
         <React.Fragment>
         <Table responsive hover>

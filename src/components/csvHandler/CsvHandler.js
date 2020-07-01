@@ -1,10 +1,8 @@
 import React,{useState} from 'react'
-import Form from 'react-bootstrap/Form'
-import { API } from '../../backend'
 import Button from 'react-bootstrap/Button'
-import { uploadFile } from '../../helper/apicalls'
 import Spinner from 'react-bootstrap/Spinner'
 import TableData from '../table/Table'
+import {uploadFuelCost,uploadDpCost} from '../../helper/apicalls'
 
 
 
@@ -15,6 +13,8 @@ const CSVHandler = () => {
     const [error,setError] = useState("")
     const [receivedData,setReceivedData] = useState([])
     const [loading,setLoading] = useState(false)
+    const [selectedFileMode,setSelectedFileMode] = useState("fuelCost")
+
 
     const handleChange = event => {
         setSelectedFile(event.target.files[0])
@@ -22,42 +22,78 @@ const CSVHandler = () => {
 
     }
 
-    const onUpload = () => {
-        const formData = new FormData();
-        formData.append(
-            "myFile",
-            selectedFile,
-            selectedFile.name
-        );
 
-        console.log(selectedFile)
-
-    }
-
-    const onUpload1 = () => {
+     const onUpload = () => {
         setLoading(true)
         const formData = new FormData();
         formData.append(
-            "myFile",
+            selectedFileMode,
             selectedFile,
             selectedFile.name
         );
-
+        console.log(`Selected file is : `)
         console.log(selectedFile)
 
-        uploadFile(selectedFile).then( data => {
-            if(data.error){
-                setError(data.error)
-                setLoading(false)
-                console.log(data.error)
-            } else {
-                setReceivedData(data)
-                setIsDataFetched(true)
-                setLoading(false)
-            }
-        })
+        if(selectedFileMode==='FuelCost'){
+            uploadFuelCost(formData).then( data => {
+                if(data?.error){
+                    setError(data.error)
+                    setLoading(false)
+                    console.log(data.error)
+                } else {
+                    console.log(data)
+                    setReceivedData(data)
+                    setIsDataFetched(true)
+                    setLoading(false)
+                }
+            })
+            console.log(receivedData)
+        } else if(selectedFileMode==='dpCost') {
+            uploadDpCost(formData).then( data => {
+                if(data?.error){
+                    setError(data.error)
+                    setLoading(false)
+                    console.log(data.error)
+                } else {
+                    console.log(data)
+                    setReceivedData(data)
+                    setIsDataFetched(true)
+                    setLoading(false)
+                }
+            })
+            console.log(receivedData)
+    
+        }  
 
     }
+
+    //    const uploadDpCost = () => {
+    //     setLoading(true)
+    //     const formData = new FormData();
+    //     formData.append(
+    //         selectedFileMode,
+    //         selectedFile,
+    //         selectedFile.name
+    //     );
+    //     console.log(`Selected file is : `)
+    //     console.log(selectedFile)
+
+    //     uploadDpCost(formData).then( data => {
+    //         if(data?.error){
+    //             setError(data.error)
+    //             setLoading(false)
+    //             console.log(data.error)
+    //         } else {
+    //             console.log(data)
+    //             setReceivedData(data)
+    //             setIsDataFetched(true)
+    //             setLoading(false)
+    //         }
+    //     })
+    //     console.log(receivedData)
+
+    // }
+
     
     const LoadingVisual = () => {
             return(    
@@ -67,11 +103,21 @@ const CSVHandler = () => {
     }
 
 
+
     return(
         <React.Fragment>
         <div className="row">
+        <div className="col-12">
+        <p className="text-center"><strong>Upload CSV file to fetch data</strong></p>
+        </div>
             <div className="col-xs-12 col-md-6 mt-3">
-                <p className="text-center"><strong>Upload CSV file to fetch data</strong></p>
+                <input type="radio" id="bike" name="fuelCost" value="fuelCost" checked={selectedFileMode==="fuelCost"}
+                onClick={() => {setSelectedFileMode("fuelCost")}}
+                     />
+                <label for="fuelCost"><i className="pl-2">Daily Fuel and bike cost</i></label><br />
+                <input type="radio" id="dp" name="dp" value="dpCost" checked={selectedFileMode==="dpCost"}
+                    onClick={() => {setSelectedFileMode("dpCost")}} />
+                <label for="dp"><i className="pl-2" >DP cost</i></label><br />
             </div>
             <div className="col-xs-12 col-6 mt-3">
             <div className="row">
@@ -83,7 +129,7 @@ const CSVHandler = () => {
                     variant="secondary" 
                     size="sm" 
                     style={{whiteSpace:"normal", wordWrap:"break-word"}}
-                    onClick = {()=> {onUpload()}}
+                    onClick = {onUpload}
                     >Upload</Button>     
             </div>
             </div>
