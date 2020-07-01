@@ -1,10 +1,10 @@
 import React,{useState} from 'react'
 import Form from 'react-bootstrap/Form'
-import Table from 'react-bootstrap/Table'
 import { API } from '../../backend'
 import Button from 'react-bootstrap/Button'
 import { uploadFile } from '../../helper/apicalls'
 import Spinner from 'react-bootstrap/Spinner'
+import TableData from '../table/Table'
 
 
 
@@ -60,61 +60,12 @@ const CSVHandler = () => {
     }
     
     const LoadingVisual = () => {
-        
-            return(
-                
+            return(    
                 <Spinner className="text-center" animation="border" variant="primary" role="status">   
                 </Spinner>
-            )
-        
+            ) 
     }
 
-    const TableData = () => {
-        return(
-            <Table responsive hover>
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Table heading</th>
-                  <th>Table heading</th>
-                  <th>Table heading</th>
-                  <th>Table heading</th>
-                  <th>Table heading</th>
-                  <th>Table heading</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>1</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                  <td>Table cell</td>
-                </tr>
-              </tbody>
-            </Table>
-        )
-    }
 
     return(
         <React.Fragment>
@@ -131,7 +82,6 @@ const CSVHandler = () => {
             <Button 
                     variant="secondary" 
                     size="sm" 
-                    
                     style={{whiteSpace:"normal", wordWrap:"break-word"}}
                     onClick = {()=> {onUpload()}}
                     >Upload</Button>     
