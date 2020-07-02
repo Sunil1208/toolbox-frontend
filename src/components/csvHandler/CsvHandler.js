@@ -1,29 +1,33 @@
 import React,{useState} from 'react'
 import Button from 'react-bootstrap/Button'
 import Spinner from 'react-bootstrap/Spinner'
-import TableData from '../table/Table'
 import {uploadFuelCost,uploadDpCost} from '../../helper/apicalls'
+import Alert from 'react-bootstrap/Alert'
 
 
 
 const CSVHandler = () => {
 
-    const [isDataFeteched,setIsDataFetched] = useState(true)
+    const [isDataFeteched,setIsDataFetched] = useState(false)
     const [selectedFile,setSelectedFile] = useState("")
     const [error,setError] = useState("")
     const [receivedData,setReceivedData] = useState([])
     const [loading,setLoading] = useState(false)
     const [selectedFileMode,setSelectedFileMode] = useState("fuelCost")
+    const [show, setShow] = useState(true);
 
 
     const handleChange = event => {
         setSelectedFile(event.target.files[0])
+        console.log(`Selected file is `)
         console.log(selectedFile)
 
     }
 
 
      const onUpload = () => {
+         console.log(`Selected file mode is `)
+         console.log(selectedFileMode)
         setLoading(true)
         const formData = new FormData();
         formData.append(
@@ -34,11 +38,12 @@ const CSVHandler = () => {
         console.log(`Selected file is : `)
         console.log(selectedFile)
 
-        if(selectedFileMode==='FuelCost'){
+        if(selectedFileMode==='fuelCost'){
             uploadFuelCost(formData).then( data => {
                 if(data?.error){
                     setError(data.error)
                     setLoading(false)
+                    setIsDataFetched(true)
                     console.log(data.error)
                 } else {
                     console.log(data)
@@ -94,6 +99,31 @@ const CSVHandler = () => {
 
     // }
 
+    const AlertVisual = ({data,success,message}) => {
+        if(success && data!==''){
+            return(
+                <Alert variant="success">
+                  <Alert.Heading>{message}</Alert.Heading>
+                  <h3><u>Generated SQL statement is</u></h3>
+                  <p>
+                    {data}
+                  </p>
+                </Alert>
+            )
+        } else if(success && data===''){
+            return(
+                <Alert variant="success">
+                  <Alert.Heading>{message}</Alert.Heading>
+                </Alert>
+            )
+        } else if(!success){
+            return(
+                <Alert variant="danger">
+                  <Alert.Heading>{message}</Alert.Heading>
+                </Alert>
+            )
+        }
+    }
     
     const LoadingVisual = () => {
             return(    
@@ -112,25 +142,27 @@ const CSVHandler = () => {
         </div>
             <div className="col-xs-12 col-md-6 mt-3">
                 <input type="radio" id="bike" name="fuelCost" value="fuelCost" checked={selectedFileMode==="fuelCost"}
-                onClick={() => {setSelectedFileMode("fuelCost")}}
+                onClick={() => {setSelectedFileMode("fuelCost");
+                                    console.log(selectedFileMode)}}
                      />
                 <label for="fuelCost"><i className="pl-2">Daily Fuel and bike cost</i></label><br />
                 <input type="radio" id="dp" name="dp" value="dpCost" checked={selectedFileMode==="dpCost"}
-                    onClick={() => {setSelectedFileMode("dpCost")}} />
+                    onClick={() => {setSelectedFileMode("dpCost");
+                                        console.log(selectedFileMode) }} />
                 <label for="dp"><i className="pl-2" >DP cost</i></label><br />
             </div>
             <div className="col-xs-12 col-6 mt-3">
             <div className="row">
             <div className="col-xs-12 col-md-8 col-lg-8 mb-2">
-            <input type="file" onChange={handleChange} />         
-            </div>
-            <div className="col-xs-12 col-md-4 col-lg-4">
+            <input type="file" onChange={handleChange} />  
+            <br></br> 
             <Button 
-                    variant="secondary" 
-                    size="sm" 
-                    style={{whiteSpace:"normal", wordWrap:"break-word"}}
-                    onClick = {onUpload}
-                    >Upload</Button>     
+            variant="secondary" 
+            size="sm" 
+            className="mt-1"
+            style={{whiteSpace:"normal", wordWrap:"break-word"}}
+            onClick = {onUpload}
+            >Upload</Button> 
             </div>
             </div>
             </div>
@@ -141,11 +173,15 @@ const CSVHandler = () => {
             <LoadingVisual/> <span className="pl-2"><strong>Uploading and fetching data.....</strong></span>
             </div>
             )}
-
-            {isDataFeteched && (
-                <TableData/>
-            )}   
+ 
         </div>
+        {isDataFeteched && (
+            <div className="row">
+                <div className="col-12">
+                    <AlertVisual data={receivedData.data} success={receivedData.success} message={receivedData.message} />
+                </div>
+            </div>
+        )}
         </React.Fragment>
     )
 }
